@@ -1,0 +1,7 @@
+---
+# Assuming default repos for Fedora are present. No extra repos are required at the moment.
+- name: Repos - Add extra repos for virt host
+#  dnf: name=http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm state=present
+  debug:
+    msg: "No extra repos required at the moment."
+

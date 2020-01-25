@@ -1,0 +1,7 @@
+---
+- name: restart libvirtd
+  service: name=libvirtd.service state=restarted
+
+#- name: load start net
+#   command: /usr/bin/virsh net-define /tmp/{{ item }}.xml && /usr/bin/virsh net-autostart "{{ item }}" && /usr/bin/virsh net-start "{{ item }}" && echo /usr/bin/virsh
+#   with_items: files_created.results

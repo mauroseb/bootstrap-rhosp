@@ -1,0 +1,13 @@
+---
+- name: Sysctl - Disable {{ item }}
+  sysctl:
+    name: {{ item }}
+    value: 0
+    state: present
+    sysctl_set: yes
+  with_items:
+    - net.ipv4.conf.all.rp_filter
+    - net.ipv4.conf.default.rp_filter
+  tag:
+    - sysctl_disable
+

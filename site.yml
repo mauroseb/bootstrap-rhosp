@@ -1,0 +1,15 @@
+---
+- name: Bootstrap OSP
+  hosts: localhost
+  roles:
+    - sysctl
+    - repos
+    - libvirt
+    - packages
+    - modprobe
+    - proxy
+
+- name: Finish
+  debug:
+    msg: "All done. Happy hacking."
+

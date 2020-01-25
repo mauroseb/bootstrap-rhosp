@@ -1,0 +1,12 @@
+---
+- name: Packages - Common required packages
+  dnf:
+    pkg: {{ item }}
+    state: present
+  with_items:
+    - xorg-x11-apps
+    - xauth
+    - virt-viewer
+    - xorg-x11-fonts-Type1
+    - tmux
+

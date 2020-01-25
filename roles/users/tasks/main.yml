@@ -1,0 +1,42 @@
+---
+- name: Users - Create group for user {{ username }}
+  group:
+    name: {{ username }}
+    gid: 9999
+    state: present
+  tag:
+    - users_group
+
+- name: Users - Create user {{ username }}
+  user:
+    name: {{ username }}
+    comment: "RHOSP deployment user"
+    createhome: yes
+    group: {{ username }}
+    groups: wheel
+    append: yes
+    shell: /bin/bash
+    uid: 9999
+    update_password: on_create
+    state: present
+    password: "supersecret"
+  tag:
+    - users_user
+
+- name: Users - Create sudo entry for  {{ username }}
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '{{ username }} ALL='
+    line: '{{ username }} ALL=(ALL) NOPASSWD: ALL'
+    validate: /usr/sbin/visudo -cf %s
+  tag:
+    - users_sudo
+
+- name: Users - Create polkit entry to allow libvirt for {{ username }}
+  template:
+    src: 50-libvirt-user-rhosp.kla
+    dst: /etc/polkit-1/localauthority/50-local.d/50-libvirt-user-rhosp.pkla
+  tag:
+    - users_polkit
+

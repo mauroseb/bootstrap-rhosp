@@ -1,0 +1,18 @@
+---
+- name: Install squid related packages
+  dnf: name={{item}} state=present
+  with_items:
+    - squid
+
+- name: enable squid
+  service: name=squid enabled=yes
+
+- name: restart squid
+  service: name=squid state=restarted
+
+- name: firewall allow permanent
+  firewalld:
+    service: squid
+    permanent: true
+    immediate: true
+    state: enabled
