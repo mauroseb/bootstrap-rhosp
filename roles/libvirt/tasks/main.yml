@@ -1,61 +1,35 @@
 ---
 # Prepare Libvirt
 - name: Libvirt - Install
-  dnf: pkg={{item}} state=present
+  dnf: 
+    pkg: "{{item}}"
+    state: present
   with_items:
-    - virt-manager
-    - libguestfs-tools
-    - virt-install
     - libvirt
+    - libguestfs-tools
+    - libguestfs-xfs
     - qemu-kvm
-    - guestfish
-    - xz
-    - curl
-    - wget
-  tag:
+    - virt-manager
+    - virt-install
+    - virt-viewer
+  tags:
     - libvirt-package
 
 - name: Libvirt - Add relevant users to libvirt group
   user: name={{ username }} groups=libvirt append=yes
   notify: restart libvirtd
-  tag:
+  tags:
     - libvirt-group
 
 - name: Libvirt - Enable and start service
   service: name=libvirtd.service enabled=yes state=started
-  tag:
+  tags:
     - libvirt-service
 
 - name: Libvirt - Networks
-  block:
-    - name: Libvirt - Create network {{ item }}
-      template:
-        src: templates/{{ item }}.j2
-        dest: /tmp/{{ item }}.xml
-        owner: root
-        group: root
-        mode: 0640
-    - nam: Libvirt - Define network {{ item }}
-      comand: /usr/bin/virsh net-define /tmp/{{ item }}.xml
-    - name: Libvirt - Set autostart on network {{ item }}
-      command: /usr/bin/virsh net-autostart "{{ item }}"
-    - name: Libvirt - Start network {{ item }}
-      command: /usr/bin/virsh net-start "{{ item }}"
-
+  include: net.yml net={{ item }}
   with_items:
     - libvirt_network_list
-  tag:
+  tags:
    - libvirt-networks
-
-
-
-
-#
-#
-#
-#- name: Add RHEL7 guest image
-#  get_url:
-#    url: "{{ rhel7_image_url }}"
-#    dest: "{{ rhel7_image_dst }}"
-#    checksum: XXXXX
-
+...

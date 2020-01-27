@@ -1,12 +1,18 @@
 ---
 - name: Packages - Common required packages
   dnf:
-    pkg: {{ item }}
+    pkg: "{{ item }}"
     state: present
   with_items:
+    - curl
+    - net-tools
+    - tmux
+    - wget
     - xorg-x11-apps
     - xauth
-    - virt-viewer
     - xorg-x11-fonts-Type1
-    - tmux
+    - xz
+  tags:
+    - packages
+
 

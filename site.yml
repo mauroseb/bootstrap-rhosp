@@ -1,15 +1,13 @@
 ---
-- name: Bootstrap OSP
+- name: Bootstrap RHOSP
   hosts: localhost
+  become: yes
+  gather_facts: no
   roles:
-    - sysctl
+#    - sysctl
     - repos
     - libvirt
     - packages
     - modprobe
     - proxy
-
-- name: Finish
-  debug:
-    msg: "All done. Happy hacking."
-
+...
