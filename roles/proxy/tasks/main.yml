@@ -1,14 +1,20 @@
 ---
-- name: Install squid related packages
-  dnf: name={{item}} state=present
+- name: Proxy - Install squid related packages
+  dnf: 
+    name: "{{item}}"
+    state: present
   with_items:
     - squid
+  notify: "Proxy - Restart squid"
+  tags:
+    - proxy_install
 
 - name: enable squid
-  service: name=squid enabled=yes
-
-- name: restart squid
-  service: name=squid state=restarted
+  service: 
+    name: squid
+    enabled: yes
+  tags:
+    - proxy_enable
 
 - name: firewall allow permanent
   firewalld:
@@ -16,3 +22,7 @@
     permanent: true
     immediate: true
     state: enabled
+  tags:
+    - proxy_firewall
+
+...

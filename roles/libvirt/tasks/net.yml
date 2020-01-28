@@ -1,18 +1,38 @@
 ---
-  - name: Libvirt - Create network {{ net }}
-    template:
-      src: templates/{{ net }}.j2
-      dest: /tmp/{{ net }}.xml
-      owner: root
-      group: root
-      mode: 0640
+  - name: "Check if network {{ net }} exists"
+    command: "/usr/bin/virsh -q net-info {{ net }}"
+    register: net_info
+    ignore_errors: true
+    no_log: true
+    changed_when: false
 
-  - nam: Libvirt - Define network {{ net }}
-    comand: /usr/bin/virsh net-define /tmp/{{ net }}.xml
+  - name: "Libvirt - Create network {{ net }}"
+    block:
+    - name: "Libvirt - Create libvirt XML file for {{ net }}"
+      template:
+        src: "templates/{{ net }}.j2"
+        dest: "/tmp/{{ net }}.xml"
+        owner: root
+        group: root
+        mode: 0640
 
-  - name: Libvirt - Set autostart on network {{ net }}
-    command: /usr/bin/virsh net-autostart "{{ net }}"
+    - name: "Libvirt - Define network {{ net }}"
+      virt_net: 
+         #command: "/usr/bin/virsh net-define  /tmp/{{ net }}.xml.j2"
+         command: define
+         name: "{{ net }}"
+         xml: "{{ lookup( 'template', 'templates/' + net + '.xml.j2' ) }}"
 
-  - name: Libvirt - Start network {{ net }}
-    command: /usr/bin/virsh net-start "{{ net }}"
+    - name: "Libvirt - Start network {{ net }}"
+      virt_net:
+         command: create 
+         autostart: yes
+         name: "{{ net }}"
 
+    - name: "Libvirt - Set autostart on network {{ net }}"
+      command: "/usr/bin/virsh net-autostart {{ net }}"
+
+    when:
+      -  net_info.rc != 0 
+      - '"error: Network not found" in net_info.stderr'
+...

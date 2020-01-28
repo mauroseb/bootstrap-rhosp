@@ -29,7 +29,7 @@
 - name: Libvirt - Networks
   include: net.yml net={{ item }}
   with_items:
-    - libvirt_network_list
+    - "{{ libvirt_network_list }}"
   tags:
    - libvirt-networks
 ...

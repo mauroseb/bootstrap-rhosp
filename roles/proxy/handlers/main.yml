@@ -1,0 +1,6 @@
+---
+- name: Proxy - Restart squid
+  service: 
+    name: squid
+    state: restarted
+...
