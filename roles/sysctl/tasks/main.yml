@@ -1,17 +1,14 @@
 ---
-#- name: "Sysctl - Disable {{ item }}"
-#  sysctl:
-#    name: "{{ item }}"
-#    value: '0'
-#    state: present
-#    sysctl_set: yes
-#    reload: yes
-#  with_items:
-#    - { net.ipv4.conf.all.rp_filter }
-#    - { net.ipv4.conf.default.rp_filter }
-#  tag:
-#    - sysctl_disable
-#
-- debug:
-  msg: "lalala"
-..
+- name: "Sysctl - Config "
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}" 
+    state: present
+    sysctl_set: yes
+    reload: yes
+  with_items:
+    - { key: 'net.ipv4.conf.all.rp_filter', value: 0 }
+    - { key: 'net.ipv4.conf.default.rp_filter', value: 0 }
+  tags:
+    - sysctl
+...

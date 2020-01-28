@@ -15,6 +15,7 @@ provisioning_net_netmask: 255.255.255.0
 default_net_ip: 192.168.122.1
 default_net_netmask: 255.255.255.0
 #default_mac: '52:54:00:c7:15:90'
+default_net_dev: enp2s0
 default_bridge`: virbr0
 
 # external network settings

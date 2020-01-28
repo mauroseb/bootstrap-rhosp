@@ -4,7 +4,7 @@
   become: yes
   gather_facts: no
   roles:
-#    - sysctl
+    - sysctl
     - repos
     - libvirt
     - packages

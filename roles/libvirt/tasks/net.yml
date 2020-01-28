@@ -1,6 +1,8 @@
 ---
   - name: "Check if network {{ net }} exists"
-    command: "/usr/bin/virsh -q net-info {{ net }}"
+    virt_net: 
+      command: info 
+      name: "{{ net }}"
     register: net_info
     ignore_errors: true
     no_log: true
@@ -18,7 +20,6 @@
 
     - name: "Libvirt - Define network {{ net }}"
       virt_net: 
-      #command: "/usr/bin/virsh net-define  /tmp/{{ net }}.xml"
         command: define
         name: "{{ net }}"
         xml: "{{ lookup( 'template', 'templates/' + net + '.xml.j2' ) }}"
@@ -29,10 +30,6 @@
          autostart: yes
          name: "{{ net }}"
 
-    - name: "Libvirt - Set autostart on network {{ net }}"
-      command: "/usr/bin/virsh net-autostart {{ net }}"
-
     when:
-      -  net_info.rc != 0 
-      - '"error: Network not found" in net_info.stderr'
+      - " net not in net_info.networks"
 ...
