@@ -1,7 +1,5 @@
 <network>
   <name>external</name>
-  <forward dev="{{ external_net_dev }}" mode='bridge'>
-	<interface dev='{{ external_net_dev }}' />
-  </forward>
-  <ip address='{{ external_net_ip }}' netmask='{{ external_net_netmask }}'/>
+  <forward mode='bridge' />
+  <bridge name="{{ external_bridge }}" />
 </network>

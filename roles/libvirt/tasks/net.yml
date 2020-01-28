@@ -10,7 +10,7 @@
     block:
     - name: "Libvirt - Create libvirt XML file for {{ net }}"
       template:
-        src: "templates/{{ net }}.j2"
+        src: "templates/{{ net }}.xml.j2"
         dest: "/tmp/{{ net }}.xml"
         owner: root
         group: root
@@ -18,10 +18,10 @@
 
     - name: "Libvirt - Define network {{ net }}"
       virt_net: 
-         #command: "/usr/bin/virsh net-define  /tmp/{{ net }}.xml.j2"
-         command: define
-         name: "{{ net }}"
-         xml: "{{ lookup( 'template', 'templates/' + net + '.xml.j2' ) }}"
+      #command: "/usr/bin/virsh net-define  /tmp/{{ net }}.xml"
+        command: define
+        name: "{{ net }}"
+        xml: "{{ lookup( 'template', 'templates/' + net + '.xml.j2' ) }}"
 
     - name: "Libvirt - Start network {{ net }}"
       virt_net:

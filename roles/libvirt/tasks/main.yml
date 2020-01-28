@@ -12,6 +12,7 @@
     - virt-manager
     - virt-install
     - virt-viewer
+    - python3-lxml
   tags:
     - libvirt-package
 
