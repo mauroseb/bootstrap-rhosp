@@ -4,10 +4,11 @@
   become: yes
   gather_facts: no
   roles:
-    - sysctl
-    - repos
-    - libvirt
-    - packages
-    - modprobe
-    - proxy
+    - baseimage
+          #- sysctl
+          #- repos
+          #- libvirt
+          #- packages
+          #- modprobe
+          #- proxy
 ...

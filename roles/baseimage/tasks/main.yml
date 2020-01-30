@@ -1,0 +1,60 @@
+---
+# Role to prepare base OS image
+- name: Base OS image
+  become: yes
+  become_user: "{{ username }}"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+  block:
+
+    - name: Check if image already exists
+      stat:
+        path: "{{ target_image }}"
+      register: image_p
+
+    - block:
+
+      - name: Create image dir
+        file:
+          path: "{{ image_dst_dir }}"
+          state: directory
+          owner: "{{ username }}"
+          group: "{{ username }}"
+          mode: '0770'
+
+      - name: Fetch OS image
+        get_url:
+          url: "{{ image_url }}"
+          dest: "{{ temp_image }}"
+        when:
+          - image_source == 'url'
+
+      - name: "Create empty {{ target_image }} of 50G"
+        command: "/usr/bin/qemu-img create -f qcow2 {{ target_image }} 50G"
+
+      - name: "Clone {{ temp_image }} into {{ target_image }}"
+        command: "/usr/bin/virt-resize --expand /dev/sda1 {{ temp_image }} {{ target_image }}"
+
+      - name: Set root password and remove cloud-init
+        command: "/usr/bin/virt-customize -a {{ target_image }} --root-password password:redhat --uninstall cloud-init"
+#        no_log: true
+
+      - name: Send ssh keys for root
+        command: "/usr/bin/virt-customize -a {{ target_image }} --ssh-inject root:string:'{{ ssh_pubkey }}'"
+        #command: "/usr/bin/virt-customize -a {{ target_image }} --ssh-inject root:file:/home/{{ username }}/.ssh/id_rsa.pub'"
+        no_log: true
+
+      - name: Set eth1 config
+        command: "/usr/bin/virt-customize -a {{ target_image }} --run-command 'cp /etc/sysconfig/network-scripts/ifcfg-eth{0,1} && sed -i s/DEVICE=.*/DEVICE=eth1/g /etc/sysconfig/network-scripts/ifcfg-eth1'"
+
+      - name: "Cleanup {{ temp_image }}"
+        file:
+          path: "{{ temp_image }}"
+          state: absent
+
+      when:
+        - image_p.stat.islnk is not defined
+      tags:
+        - baseimage
+
+...
