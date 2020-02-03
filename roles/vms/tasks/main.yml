@@ -1,0 +1,16 @@
+---
+# Create undercloud VM
+- name: "Create undercloud VM"
+  include: vm.yml name="undercloud" ram=16384 vcpus=4 ceph=false externalnet=false empty_root=false
+  tags:
+    - undercloud
+
+# Create overcloud VMs
+- name: "Create overcloud VMs"
+  include: vm.yml name={{ item.name }} ram={{ item.ram }} vcpus={{ item.vcpus }} ceph={{ item.ceph }} externalnet={{ item.externalnet }} empty_root={{ item.emtpy_root }}
+  loop: "{{ overcloud|list }}"
+  loop_control:
+    label: "{{ item.name }}"
+  tags:
+    - overcloud
+...

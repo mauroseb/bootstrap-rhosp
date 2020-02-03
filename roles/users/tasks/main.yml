@@ -4,8 +4,8 @@
     name: {{ username }}
     gid: 9999
     state: present
-  tag:
-    - users_group
+  tags:
+    - users
 
 - name: Users - Create user {{ username }}
   user:
@@ -20,8 +20,8 @@
     update_password: on_create
     state: present
     password: "supersecret"
-  tag:
-    - users_user
+  tags:
+    - users
 
 - name: Users - Create sudo entry for  {{ username }}
   lineinfile:
@@ -30,13 +30,17 @@
     regexp: '{{ username }} ALL='
     line: '{{ username }} ALL=(ALL) NOPASSWD: ALL'
     validate: /usr/sbin/visudo -cf %s
-  tag:
-    - users_sudo
+  tags:
+    - users
 
 - name: Users - Create polkit entry to allow libvirt for {{ username }}
   template:
     src: 50-libvirt-user-rhosp.kla
     dst: /etc/polkit-1/localauthority/50-local.d/50-libvirt-user-rhosp.pkla
-  tag:
-    - users_polkit
+    mode: 0640
+    seuser: system_u
+    serole: object_r
+    setype: etc_t
+  tags:
+    - users
 

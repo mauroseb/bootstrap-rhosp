@@ -1,10 +1,10 @@
 ---
-# Role to prepare base OS image
+# Role to prepare base OS image from which all other are derived
 - name: Base OS image
   become: yes
-  become_user: "{{ username }}"
   environment:
     LIBGUESTFS_BACKEND: direct
+    LIBVIRT_DEFAULT_URI: 'qemu+ssh://stack@localhost/system'
   block:
 
     - name: Check if image already exists
@@ -14,13 +14,16 @@
 
     - block:
 
-      - name: Create image dir
+      - name: Create image dir if not there
         file:
           path: "{{ image_dst_dir }}"
           state: directory
-          owner: "{{ username }}"
-          group: "{{ username }}"
-          mode: '0770'
+          owner: root
+          group: root
+          mode: '755'
+          serole: object_r
+          setype: virt_image_t
+          seuser: system_u
 
       - name: Fetch OS image
         get_url:
@@ -31,16 +34,18 @@
 
       - name: "Create empty {{ target_image }} of 50G"
         command: "/usr/bin/qemu-img create -f qcow2 {{ target_image }} 50G"
+        become_user: root
 
       - name: "Clone {{ temp_image }} into {{ target_image }}"
         command: "/usr/bin/virt-resize --expand /dev/sda1 {{ temp_image }} {{ target_image }}"
 
       - name: Set root password and remove cloud-init
         command: "/usr/bin/virt-customize -a {{ target_image }} --root-password password:redhat --uninstall cloud-init"
-#        no_log: true
+        no_log: true
 
-      - name: Send ssh keys for root
+      - name: Send ssh keys in conf for root access
         command: "/usr/bin/virt-customize -a {{ target_image }} --ssh-inject root:string:'{{ ssh_pubkey }}'"
+        # TODO: Change to file
         #command: "/usr/bin/virt-customize -a {{ target_image }} --ssh-inject root:file:/home/{{ username }}/.ssh/id_rsa.pub'"
         no_log: true
 
