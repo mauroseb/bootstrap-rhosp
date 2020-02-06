@@ -1,5 +1,16 @@
 ---
 # Role to prepare base OS image from which all other are derived
+#
+# If VIRTHOST is in RHEL7 or equivalent extra steps are required
+# to run RHEL8 guest (download libguestfs appliance, extract and
+# set  environment LIBGUESTFS_PATH to /path/to/appliance/)
+#
+# URL:
+# http://download.libguestfs.org/binaries/appliance/appliance-1.40.1.tar.xz
+#
+# Since I am on a newer OS no need for all that
+#
+
 - name: Base OS image
   become: yes
   environment:

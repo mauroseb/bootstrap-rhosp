@@ -1,4 +1,0 @@
----
-# Role to create the required VMs for deployment
-- name: Create required VMs
-

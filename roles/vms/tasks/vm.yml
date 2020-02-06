@@ -7,35 +7,30 @@
       command: "/usr/bin/qemu-img create -f qcow2 -b {{ target_image }} {{ image_dst_dir }}/{{ name }}.qcow2 "
       args:
         creates:  "{{ image_dst_dir }}/{{ name }}.qcow2"
-      when:
-        - not empty_root
+      when: not empty_root|bool
 
     - name: "Create {{ name }} empty root volume"
-      command: "/usr/bin/qemu-img create -f qcow2 -o preallocation=metadata {{ image_dst_dir }}/{{ name }}.qcow2 "
+      command: "/usr/bin/qemu-img create -f qcow2 -o preallocation=metadata {{ image_dst_dir }}/{{ name }}.qcow2 50G"
       args:
         creates:  "{{ image_dst_dir }}/{{ name }}.qcow2"
-      when:
-        - empty_root
+      when: empty_root|bool
 
     - name: "Create OSD disk for {{ name }}"
       command: "/usr/bin/qemu-img create -f qcow2 -o preallocation=metadata {{ image_dst_dir }}/{{ name }}-osd-1.qcow2 50G"
       args:
         creates:  "{{ image_dst_dir }}/{{ name }}-osd-1.qcow2"
-      when:
-        - ceph
+      when: ceph|bool
 
     - name: "Create {{ name }} VM"
-      command: "/usr/bin/virt-install --ram  {{ ram }} --vcpus {{ vcpus }} --os-variant rhel7 --cpu host,+vmx --disk path={{ image_dst_dir }}/{{ name }}.qcow2,device=disk,bus=virtio,format=qcow2 --import --noautoconsole --vnc --network network:provisioning --network network:default --name {{ name }}"
+      command: "/usr/bin/virt-install --ram  {{ ram }} --vcpus {{ vcpus }} --os-variant {{ image_type }} --cpu host,+vmx --disk path={{ image_dst_dir }}/{{ name }}.qcow2,device=disk,bus=virtio,format=qcow2 --import --noautoconsole --vnc --network network:provisioning --network network:default --name {{ name }}"
       args:
         creates:  "/etc/libvirt/qemu/{{ name }}.xml"
-      when:
-        - not ceph
+      when: not ceph|bool
 
     - name: "Create {{ name }} VM"
-      command: "/usr/bin/virt-install --ram  {{ ram }} --vcpus {{ vcpus }} --os-variant rhel7 --cpu host,+vmx --disk path={{ image_dst_dir }}/{{ name }}.qcow2,device=disk,bus=virtio,format=qcow2 --disk path={{ image_dst_dir }}/{{ name }}-osd-1.qcow2 --import --noautoconsole --vnc --network network:provisioning --network network:default --name {{ name }}"
+      command: "/usr/bin/virt-install --ram  {{ ram }} --vcpus {{ vcpus }} --os-variant {{ image_type }} --cpu host,+vmx --disk path={{ image_dst_dir }}/{{ name }}.qcow2,device=disk,bus=virtio,format=qcow2 --disk path={{ image_dst_dir }}/{{ name }}-osd-1.qcow2 --import --noautoconsole --vnc --network network:provisioning --network network:default --name {{ name }}"
       args:
         creates:  "/etc/libvirt/qemu/{{ name }}.xml"
-      when:
-        - ceph
+      when: ceph|bool
 
 ...

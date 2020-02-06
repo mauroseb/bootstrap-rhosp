@@ -1,13 +1,39 @@
 ---
 # Create undercloud VM
-- name: "Create undercloud VM"
-  include: vm.yml name="undercloud" ram=16384 vcpus=4 ceph=false externalnet=false empty_root=false
+- name: "Setup undercloud VM"
+  block:
+
+  - name: Create VM
+    include: vm.yml name="undercloud" ram=16384 vcpus=4 ceph=false externalnet=false empty_root=false
+
+  - name: Setup undercloud eth0
+    command: >
+      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ name }}.qcow2 --run-command 'cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-eth0
+      DEVICE=eth0
+      BOOTPROTO=none
+      ONBOOT=no
+      EOF'
+
+  - name: Setup undercloud eth1
+    command: >
+      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ name }}.qcow2 --run-command 'cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-eth1
+      DEVICE=eth1
+      BOOTPROTO=static
+      ONBOOT=yes
+      IPADDR=192.168.122.253
+      PREFIX=24
+      EOF'
+
+  - name: Setup undercloud /etc/hosts
+    command: "/usr/bin/virt-customize -a {{ image_dst_dir }}/{{ name }}.qcow2 --append-line '/etc/hosts:192.168.122.253 undercloud.lab.local' undercloud"
+
   tags:
-    - undercloud
+  - undercloud
+
 
 # Create overcloud VMs
 - name: "Create overcloud VMs"
-  include: vm.yml name={{ item.name }} ram={{ item.ram }} vcpus={{ item.vcpus }} ceph={{ item.ceph }} externalnet={{ item.externalnet }} empty_root={{ item.emtpy_root }}
+  include: vm.yml name={{ item.name }} ram={{ item.ram }} vcpus={{ item.vcpus }} ceph={{ item.ceph }} externalnet={{ item.externalnet }} empty_root={{ item.empty_root }}
   loop: "{{ overcloud|list }}"
   loop_control:
     label: "{{ item.name }}"
