@@ -1,5 +1,5 @@
 ---
-- name: Packages - Common required packages
+- name: Common required packages
   dnf:
     pkg: "{{ item }}"
     state: present
@@ -15,5 +15,6 @@
     - xz
   tags:
     - packages
+    - prereqs
 
 

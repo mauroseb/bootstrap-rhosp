@@ -1,5 +1,5 @@
 ---
-- name: "Sysctl - Config "
+- name: "Config"
   sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}" 
@@ -11,4 +11,5 @@
     - { key: 'net.ipv4.conf.default.rp_filter', value: 0 }
   tags:
     - sysctl
+    - prereqs
 ...

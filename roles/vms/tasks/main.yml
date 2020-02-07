@@ -43,7 +43,13 @@
       regexp: '.*{{ undercloud_name }}\.{{ domain_name }}.*'
       line: "192.168.122.253 {{ undercloud_name }}.{{ domain_name }} {{ undercloud_name }}"
 
+  - name: Ensure undercloud vm is on
+    virt:
+      name: "{{ undercloud_name }}"
+      state: started
+
   rescue:
+
   - name: Destroy undercloud vm
     virt:
       name: "{{ undercloud_name }}"

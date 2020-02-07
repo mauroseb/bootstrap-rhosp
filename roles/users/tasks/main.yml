@@ -1,13 +1,14 @@
 ---
-- name: Users - Create group for user {{ username }}
+- name: Create group for user {{ username }}
   group:
     name: {{ username }}
     gid: 9999
     state: present
   tags:
     - users
+    - prereqs
 
-- name: Users - Create user {{ username }}
+- name: Create user {{ username }}
   user:
     name: {{ username }}
     comment: "RHOSP deployment user"
@@ -23,7 +24,7 @@
   tags:
     - users
 
-- name: Users - Create sudo entry for  {{ username }}
+- name: Create sudo entry for  {{ username }}
   lineinfile:
     path: /etc/sudoers
     state: present
@@ -33,7 +34,7 @@
   tags:
     - users
 
-- name: Users - Create polkit entry to allow libvirt for {{ username }}
+- name: Create polkit entry to allow libvirt for {{ username }}
   template:
     src: 50-libvirt-user-rhosp.kla
     dst: /etc/polkit-1/localauthority/50-local.d/50-libvirt-user-rhosp.pkla

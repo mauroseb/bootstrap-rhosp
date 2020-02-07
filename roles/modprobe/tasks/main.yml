@@ -1,5 +1,5 @@
 ---
-- name: Modprobe - Adding module config for kvm_intel
+- name: Adding module config for kvm_intel
   lineinfile:
     path: /etc/modprobe.d/kvm.conf
     regexp: '^options kvm_intel {{ item }}'
@@ -10,13 +10,15 @@
     - enable_apicv
     - ept
   tags:
-    - modprobe-conf
+    - modprobe
+    - prereqs
 
-- name: Modprobe - Enable module kvm_intel
+- name: Enable module kvm_intel
   modprobe:
     name: "{{ item }}"
   with_items:
     - kvm
     - kvm_intel
   tags:
-    - modprobe-enable
+    - modprobe
+    - prereqs
