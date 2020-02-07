@@ -15,9 +15,12 @@
    - Create overcloud vms
 
 
+*NOTE: There are more mature and complex ways to achieve similar results like infrared project or TripleO quickstart*
+
 ### Prerequisits
 
  - Have a fresh fedora build
+ - At least 96 GB of RAM
  - Internet connection
  - Following software installed:
    - git
