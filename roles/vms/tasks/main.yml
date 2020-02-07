@@ -1,31 +1,63 @@
 ---
 # Create undercloud VM
 - name: "Setup undercloud VM"
+  become: yes
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    LIBVIRT_DEFAULT_URI: 'qemu+ssh://stack@localhost/system'
+
   block:
 
-  - name: Create VM
-    include: vm.yml name="undercloud" ram=16384 vcpus=4 ceph=false externalnet=false empty_root=false
+  - name: Create underlcoud vm
+    include: vm.yml name={{ undercloud_name }} ram=16384 vcpus=4 ceph=false externalnet=false empty_root=false
+
+  - name: Ensure undercloud vm is off
+    virt:
+      name: "{{ undercloud_name }}"
+      state: destroyed
+
+  - name: Run virt-sysprep for undercloud vm
+    command: "/usr/bin/virt-sysprep -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2"
 
   - name: Setup undercloud eth0
     command: >
-      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ name }}.qcow2 --run-command 'cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-eth0
-      DEVICE=eth0
-      BOOTPROTO=none
-      ONBOOT=no
-      EOF'
+      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --run-command 'echo  -e "DEVICE=eth0\nBOOTPROTO=none\nONBOOT=no\n" > /etc/sysconfig/network-scripts/ifcfg-eth0'
 
   - name: Setup undercloud eth1
     command: >
-      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ name }}.qcow2 --run-command 'cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-eth1
-      DEVICE=eth1
-      BOOTPROTO=static
-      ONBOOT=yes
-      IPADDR=192.168.122.253
-      PREFIX=24
-      EOF'
+      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --run-command 'echo -e "DEVICE=eth1\nBOOTPROTO=static\nONBOOT=yes\nIPADDR=192.168.122.253\nPREFIX=24\n" > /etc/sysconfig/network-scripts/ifcfg-eth1'
+
+  - name: Restore SELinux context in /etc/sysconfig
+    command: "virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --run-command 'restorecon -RvF /etc/sysconfig/'"
 
   - name: Setup undercloud /etc/hosts
-    command: "/usr/bin/virt-customize -a {{ image_dst_dir }}/{{ name }}.qcow2 --append-line '/etc/hosts:192.168.122.253 undercloud.lab.local' undercloud"
+    command: "/usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --append-line '/etc/hosts:192.168.122.253 {{ undercloud_name }}.{{ domain_name }} {{ undercloud_name }}'"
+
+  - name: Setup undercloud hostname
+    command: "/usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --hostname '{{ undercloud_name }}.lab.local'"
+
+  - name: Setup undercloud hostname in virt host /etc/hosts
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      regexp: '.*{{ undercloud_name }}\.{{ domain_name }}.*'
+      line: "192.168.122.253 {{ undercloud_name }}.{{ domain_name }} {{ undercloud_name }}"
+
+  rescue:
+  - name: Destroy undercloud vm
+    virt:
+      name: "{{ undercloud_name }}"
+      state: destroyed
+
+  - name: Undefine undercloud vm
+    virt:
+      name: "{{ undercloud_name }}"
+      command: undefine
+
+  - name: Cleanup undercloud vm overlay
+    file:
+      path: "{{ image_dst_dir }}/{{ undercloud_name }}.qcow2"
+      state: absent
 
   tags:
   - undercloud

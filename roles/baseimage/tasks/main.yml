@@ -45,6 +45,8 @@
 
       - name: "Create empty {{ target_image }} of 50G"
         command: "/usr/bin/qemu-img create -f qcow2 {{ target_image }} 50G"
+        args:
+          creates: "{{ target_image }}"
         become_user: root
 
       - name: "Clone {{ temp_image }} into {{ target_image }}"
@@ -67,6 +69,8 @@
         file:
           path: "{{ temp_image }}"
           state: absent
+        when:
+          - remove_temp_image
 
       when:
         - image_p.stat.islnk is not defined
