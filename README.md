@@ -15,7 +15,7 @@
    - Create overcloud vms
 
 
-*NOTE: There are more mature and complex ways to achieve similar results like infrared project or TripleO quickstart*
+*NOTE: There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code is simpler and *
 
 ### Prerequisits
 
