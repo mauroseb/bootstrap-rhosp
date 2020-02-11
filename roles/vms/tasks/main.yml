@@ -46,7 +46,7 @@
   - name: Ensure undercloud vm is on
     virt:
       name: "{{ undercloud_name }}"
-      state: started
+      state: running
 
   rescue:
 
