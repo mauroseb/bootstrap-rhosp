@@ -13,6 +13,7 @@
    - Create base image to build undercloud and other systems required
    - Create and tune undercloud vm
    - Create overcloud vms
+   - Setup vBMC for the VMs
 
 
 *NOTE: There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code is simpler and *
