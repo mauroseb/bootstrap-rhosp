@@ -33,9 +33,10 @@
  1. Clone repo
 
         $ git clone https://gitlab.cee.redhat.com/moddi/bootstrap-rhosp
- 2. Edit variables of each role to match environment
+ 2. Edit variables to match environment
 
         $ cd bootstrap-rhosp
+        $ vi group_vars/all
 
  3. Run prerequisites
 
