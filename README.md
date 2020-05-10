@@ -16,7 +16,7 @@
    - Setup vBMC for the VMs
 
 
-*NOTE: There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code is simpler and *
+**NOTE:** There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code tries to keep the steps as simple as possible and should be easy to troubleshoot.
 
 ### Prerequisites
 
