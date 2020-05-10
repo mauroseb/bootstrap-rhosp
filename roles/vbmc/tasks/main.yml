@@ -1,0 +1,48 @@
+---
+# Setup vBMC
+- name: vBMC
+  become: yes
+  tags:
+    - vbmc
+  block:
+    - name: Install vBMC
+      dnf:
+        pkg: "{{ item }}"
+        state: present
+      loop:
+        - python3-virtualbmc
+        - ipmitool
+
+    - name: Enable and start service vbmcd
+      service:
+        name: libvirtd.service
+        enabled: yes
+        state: started
+
+    - name: Create vBMC configuration for every VM
+      command: |
+        /usr/bin/vbmc add {{ item.name }} --port {{ 6500 + idx }} --username {{ vbmcuser }} --password {{ vbmcpass }}
+      loop: "{{ overcloud|list }}"
+      loop_control:
+        index_var: idx
+        label: "{{ item.name }}"
+
+    - name: Start vBMC for every VM
+      command: |
+        /usr/bin/vbmc start {{ item.name }}
+      loop: "{{ overcloud|list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Open firewall port for every VM console in libvirt zone
+      firewalld:
+        port: "{{ 6500 + idx }}/udp"
+        permanent: true
+        immediate: true
+        state: enabled
+        zone: libvirt
+      loop: "{{ overcloud|list }}"
+      loop_control:
+        index_var: idx
+        label: "{{ item.name }}"
+...

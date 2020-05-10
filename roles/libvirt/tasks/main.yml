@@ -1,40 +1,60 @@
 ---
-# Prepare Libvirt
-- name: Install
-  dnf:
-    pkg: "{{item}}"
-    state: present
-  with_items:
-    - libvirt
-    - libguestfs-tools
-    - libguestfs-xfs
-    - qemu-kvm
-    - virt-manager
-    - virt-install
-    - virt-viewer
-    - python3-lxml
+# Setup Libvirt
+- name: Setup libvirt
   tags:
     - libvirt
-    - prereqs
+  block:
+    - name: Check if libvirt is running
+      systemd:
+        name: libvirt
+        state: started
+  rescue:
+    - name: Install libvirt and deps
+      dnf:
+        pkg: "{{item}}"
+        state: present
+      with_items:
+        - libvirt
+        - libguestfs-tools
+        - libguestfs-xfs
+        - qemu-kvm
+        - virt-manager
+        - virt-install
+        - virt-viewer
+        - python3-lxml
+        - libvirt-client
+        - libvirt-daemon
+        - libvirt-daemon-driver-qemu
+        - libvirt-daemon-kvm
 
-- name: Add relevant users to libvirt group
-  user: name={{ username }} groups=libvirt append=yes
-  notify: restart libvirtd
-  tags:
-    - libvirt
-    - prereqs
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
 
-- name: Enable and start service
-  service: name=libvirtd.service enabled=yes state=started
-  tags:
-    - libvirt
-    - prereqs
+    - name: Add relevant users to libvirt group
+      user:
+        name: "{{ username }}"
+        groups: libvirt
+        append: yes
+      notify: restart libvirtd
 
-- name: Setup networks
-  include: net.yml net={{ item }}
-  with_items:
-    - "{{ libvirt_network_list }}"
-  tags:
-   - libvirt
-   - prereqs
+    - name: Setup networks
+      include: net.yml net={{ item }}
+      with_items:
+        - "{{ libvirt_network_list }}"
+
+    - name: Enable and start service
+      service:
+        name: libvirtd.service
+        enabled: yes
+        state: started
+
+    - name: Check hypervisor
+      shell: /usr/bin/virt-host-validate qemu
+      ignore_errors: true
+      register: libvirt_vhv
+
+    - debug:
+        msg: libvirt_vhv.stdout
+
 ...

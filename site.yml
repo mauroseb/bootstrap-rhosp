@@ -1,5 +1,5 @@
 ---
-- name: Bootstrap RHOSP
+- name: Prerequisites
   hosts: localhost
   become: yes
   gather_facts: no
@@ -9,7 +9,30 @@
     - sysctl
     - modprobe
     - libvirt
+  tags:
+    - prereqs
+
+- name: Setup RHOSP VMs
+  hosts: localhost
+  become: yes
+  gather_facts: no
+  roles:
     - proxy
     - baseimage
     - vms
+    - vbmc
+  tasks:
+    - name: Add host to inventory
+      add_host:
+        name: "{{ undercloud_name }}"
+        ansible_ssh_user: root
+        ansible_password: redhat
+        ansible_ssh_private_key_file: '~/.ssh/id_rsa'
+        group: undercloud
+
+#- name: Configure undercloud and prepare for deployment
+#  hosts: undercloud
+#  gather_facts: no
+#  roles:
+#    - undercloud
 ...

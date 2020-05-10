@@ -1,13 +1,19 @@
 ---
+# RHOSP version (13|16)
+rhosp_version: 13
 # Stack user
 username: stack
 
 # Undercloud hostname
-undercloud_name: undercloud-osp16beta
+undercloud_name: undercloud-osp16
 
 # domain name
 domain_name: lab.local
 
+# CDN user
+cdnuser: youruser
+cdnpass: yourpassword
+poolid: yourosppoolID
 #----------------- Images ----------------------------------
 # Images can be passed from a URL or a local file.
 # Given RHEL guest image needs authentication, it can be
@@ -41,15 +47,19 @@ target_image: "{{ image_dst_dir }}/baseos-{{ image_type }}.qcow2"
 remove_temp_image: false
 
 # Key to inject in VMs
-ssh_pubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/k3AOCC9eLHg3KxhGkaUeWrF5FuY/f8jb8r+UjLCv5BBQLaELaYLQYgRxKN7u0/T7/OvMYvOKjNEAYPXYiENVFDvbMZxKftkml0bdlTfHvYRgvQXeTPHQ5q bDzhJXeabDOrljWtW3qw48w0SGiqlKMqU9ayyAfUNjxg2zCS42pVcGoVQq4uTGbrxJBmUpJZEP8sWqXrJRpx+8/7er0xDx2n8fhMym7trrniyztOZnQy0uV7UKh5qseYtam+dkMrA9drDNeL5YO+e3bAppIRVd BRnp0QkdIVI+dzb0HpTPNJ9f5cwfUPAopqD2XawayfKSmOrFhEALXMjT70dhKqq2sVUP6ZazZWnYNgbJdcBOp+s0Am5YNLU/Ae1Qbk+ZMFm6cg237GjwljX9g/3FKVbekNMZFuAVA6a3jAcMjBtnTqbzp2HHfV eWLJWWJSShtpv4cPQVfKoRgS7RauBHmWB0z6t3Wx/+P+3YyFQ7bs38K4x74j7QoRleQXxKlKGtcnWnn682XM9x1ovFfQytEVK0KIi0L+NX1hU41z3juNtk974xVtFnIlPKAIYP9CGXXCDz3VB2dCkLxSE63vkU g8ZaxGcGAq44eOCsHHMQhCd02krxvivBGXLiy4s2p6nuZEDtmp4tsoL2f352M4dmHSqNL5EqKQ4ljKH1xOtMosHVMw=='
+ssh_pubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/k3AOCC9eLHg3KxhGkaUeWrF5FuY/f8jb8r+UjLCv5BBQLaELaYLQYgRxKN7u0/T7/OvMYvOKjNEAYPXYiENVFDvbMZxKftkml0bdlTfHvYRgvQXeTPHQ5qbDzhJXeabDOrljWtW3qw48w0SGiqlKMqU9ayyAfUNjxg2zCS42pVcGoVQq4uTGbrxJBmUpJZEP8sWqXrJRpx+8/7er0xDx2n8fhMym7trrniyztOZnQy0uV7UKh5qseYtam+dkMrA9drDNeL5YO+e3bAppIRVdBRnp0QkdIVI+dzb0HpTPNJ9f5cwfUPAopqD2XawayfKSmOrFhEALXMjT70dhKqq2sVUP6ZazZWnYNgbJdcBOp+s0Am5YNLU/Ae1Qbk+ZMFm6cg237GjwljX9g/3FKVbekNMZFuAVA6a3jAcMjBtnTqbzp2HHfVeWLJWWJSShtpv4cPQVfKoRgS7RauBHmWB0z6t3Wx/+P+3YyFQ7bs38K4x74j7QoRleQXxKlKGtcnWnn682XM9x1ovFfQytEVK0KIi0L+NX1hU41z3juNtk974xVtFnIlPKAIYP9CGXXCDz3VB2dCkLxSE63vkUg8ZaxGcGAq44eOCsHHMQhCd02krxvivBGXLiy4s2p6nuZEDtmp4tsoL2f352M4dmHSqNL5EqKQ4ljKH1xOtMosHVMw=='
 
 # Overcloud VMs to create
 overcloud: [
 { name: 'ice-ctl-01' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, empty_root: true },
 { name: 'ice-ctl-02' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-ctl-02' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-02' , vcpus: 4, ram: 4096, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-02' , vcpus: 4, ram: 4096, ceph: false, externalnet: false, empty_root: true },
+{ name: 'ice-ctl-03' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, empty_root: true },
+{ name: 'ice-com-01' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
+{ name: 'ice-com-02' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
+{ name: 'ice-com-03' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
+{ name: 'ice-com-04' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
+{ name: 'ice-com-05' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
+{ name: 'ice-com-06' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
 { name: 'ice-net-01' , vcpus: 2, ram: 6144, ceph: false, externalnet: false, empty_root: true },
 { name: 'ice-net-02' , vcpus: 2, ram: 6144, ceph: false, externalnet: false, empty_root: true },
 { name: 'ice-ceph-01' , vcpus: 4, ram: 4096, ceph: true, externalnet: false, empty_root: true },
