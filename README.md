@@ -13,11 +13,12 @@
    - Create base image to build undercloud and other systems required
    - Create and tune undercloud vm
    - Create overcloud vms
+   - Setup vBMC for the VMs
 
 
-*NOTE: There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code is simpler and *
+**NOTE:** There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code tries to keep the steps as simple as possible and should be easy to troubleshoot.
 
-### Prerequisits
+### Prerequisites
 
  - Have a fresh fedora build
  - At least 96 GB of RAM
@@ -33,9 +34,10 @@
  1. Clone repo
 
         $ git clone https://gitlab.cee.redhat.com/moddi/bootstrap-rhosp
- 2. Edit variables of each role to match environment
+ 2. Edit variables to match environment
 
         $ cd bootstrap-rhosp
+        $ vi group_vars/all
 
  3. Run prerequisites
 
