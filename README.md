@@ -17,7 +17,7 @@
 
 *NOTE: There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code is simpler and *
 
-### Prerequisits
+### Prerequisites
 
  - Have a fresh fedora build
  - At least 96 GB of RAM
