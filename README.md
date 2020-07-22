@@ -33,7 +33,8 @@
 
  1. Clone repo
 
-        $ git clone https://gitlab.cee.redhat.com/moddi/bootstrap-rhosp
+        $ git clone https://github.com/mauroseb/bootstrap-rhosp.git
+        
  2. Edit variables to match environment
 
         $ cd bootstrap-rhosp
