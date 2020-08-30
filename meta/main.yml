@@ -1,0 +1,13 @@
+galaxy_info:
+  author: Mauro Oddi
+  description: 
+  company: Red Hat
+  license: MIT
+  min_ansible_version: 2.4
+  platforms:
+  - name: Fedora
+    versions:
+    - all
+  galaxy_tags:
+  - openstack
+dependencies: []
