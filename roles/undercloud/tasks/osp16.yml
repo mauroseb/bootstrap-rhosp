@@ -43,4 +43,6 @@
       - sysstat
       - crudini
       - strace
+      - wget
+      - virt-customize
 
