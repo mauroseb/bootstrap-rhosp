@@ -1,16 +1,31 @@
 ---
+- name: "Check if undercloud root disk already exists"
+  stat:
+    path: "{{ image_dst_dir }}/{{ undercloud_name }}.qcow2"
+  register: uc_file
 
 - name: "Create undercloud VM"
-  include: undercloud.yml
+  include_tasks: undercloud.yml
+  when:
+    - uc_file.stat.islnk is not defined
   tags:
     - undercloud
 
 # Create overcloud VMs
 - name: "Create overcloud VMs"
-  include: vm.yml name={{ item.name }} ram={{ item.ram }} vcpus={{ item.vcpus }} ceph={{ item.ceph }} externalnet={{ item.externalnet }} empty_root={{ item.empty_root }}
+  include_tasks: vm.yml
+  vars:
+    name: "{{ item.name }}"
+    ram: "{{ item.ram }}"
+    vcpus: "{{ item.vcpus }}"
+    ceph: "{{ item.ceph }}"
+    externalnet: "{{ item.externalnet }}"
+    empty_root: "{{ item.empty_root }}"
   loop: "{{ overcloud|list }}"
   loop_control:
     label: "{{ item.name }}"
+  when:
+    - overcloud is defined
   tags:
     - overcloud
 ...

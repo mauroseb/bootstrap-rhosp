@@ -1,0 +1,18 @@
+{
+"nodes":[
+{% for node_d in overcloud %}
+  {% for node in node_d.values() %}
+	{
+	"mac":[ "{{ mac_list[node.name] }}" ],
+	"pm_type":"ipmi",
+	"pm_user":"{{ vbmcuser }}",
+	"pm_password":"{{ vbmcpass }}",
+	"pm_addr":"192.168.122.1",
+	"pm_port":"{{ 6500 + loop.index }}",
+	"name": "{{ node.name }}",
+	"capabilities": "node:{{ node.name }},boot_option:local"
+	},
+	{% endfor %}
+{% endfor %}
+]
+}

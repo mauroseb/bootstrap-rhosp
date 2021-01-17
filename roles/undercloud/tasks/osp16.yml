@@ -1,0 +1,46 @@
+- block:
+  - name: Fix RHEL8 minor version to 8.1 (RHOSP16.0)
+    command: /usr/bin/subscription-manager release --set=8.1
+
+  - name: Enable undercloud repos for OSP16
+    rhsm_repository:
+      name:
+        - rhel-8-for-x86_64-baseos-rpms
+        - rhel-8-for-x86_64-appstream-rpms
+        - rhel-8-for-x86_64-highavailability-rpms
+        - rhel-8-for-x86_64-supplementary-rpms
+        - ansible-2.8-for-rhel-8-x86_64-rpms
+        - openstack-16-for-rhel-8-x86_64-rpms
+        - fast-datapath-for-rhel-8-x86_64-rpms
+        - rhceph-4-tools-for-rhel-8-x86_64-rpms
+      state: enabled
+
+  - name: "Install required packages for OSP16"
+    yum:
+      pkg: "{{ item }}"
+      state: present
+    loop:
+      - python3-tripleoclient
+      - rhosp-director-images
+      #- rhosp-director-images-minimal
+      #- rhosp-director-images-ipa
+      - ceph-ansible
+      - tmux
+      - git
+      - ansible
+      - facter
+      - vim-enhanced
+      #- libvirt
+      #- libguestfs-tools
+      #- htop
+      - tcpdump
+      - wireshark
+      - ipmitool
+      - OpenIPMI
+      - strace
+      - iperf3
+      - perf
+      - sysstat
+      - crudini
+      - strace
+

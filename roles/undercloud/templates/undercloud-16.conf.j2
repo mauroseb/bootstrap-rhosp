@@ -1,0 +1,29 @@
+[DEFAULT]
+local_ip = 172.16.0.2/24
+local_interface = eth0
+undercloud_public_host = 172.16.0.3
+undercloud_admin_host = 172.16.0.4
+container_images_file = /home/stack/containers-prepare-parameter.yaml
+undercloud_ntp_servers = 192.168.3.254
+undercloud_debug = true
+undercloud_hostname = {{ undercloud_name }}.{{ domain_name }}
+enabled_hardware_types = ipmi,redfish,ilo,idrac,fake-hardware,manual-management
+clean_nodes = true
+#masquerade_network 172.16.0.0/24
+#docker_insecure_registries=docker-registry.engineering.redhat.com
+#undercloud_service_certificate = /etc/pki/instack-certs/undercloud.pem
+## BEGIN TLS EVERYWHERE SETTINGS -->
+#enable_novajoin = True
+#ipa_otp = 8BmwmwkJvUukwuIGYt0eVjnuE6c9lAz9dDPrzAomDu67
+#overcloud_domain_name = lab.local
+#undercloud_nameservers = 192.168.122.1
+# END TLS EVERYWHERE SETTINGS -->
+
+[ctlplane-subnet]
+gateway = 172.16.0.2
+cidr = 172.16.0.0/24
+masquerade = true
+dhcp_start = 172.16.0.10
+dhcp_end = 172.16.0.59
+inspection_iprange = 172.16.0.60,172.16.0.99
+

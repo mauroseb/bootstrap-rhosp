@@ -5,15 +5,19 @@ rhosp_version: 13
 username: stack
 
 # Undercloud hostname
-undercloud_name: undercloud-osp16
+undercloud_name: "undercloud-osp{{ rhosp_version }}"
 
 # domain name
 domain_name: lab.local
 
-# CDN user
-cdnuser: youruser
-cdnpass: yourpassword
-poolid: yourosppoolID
+
+# CDN connection details
+cdnuser: {{ cdnuser }}
+cdnpass: {{ cdnpass }}
+poolid: {{ cdnpool }}
+
+# Use satellite
+satellite: false
 #----------------- Images ----------------------------------
 # Images can be passed from a URL or a local file.
 # Given RHEL guest image needs authentication, it can be
@@ -26,8 +30,6 @@ poolid: yourosppoolID
 # For local images set:
 #
 #     image_source: 'file'
-#     image_type: 'rhel7'
-#     image_name: 'rhel7-guest.qcow2'
 #
 # Fir url images set:
 #
@@ -38,8 +40,8 @@ poolid: yourosppoolID
 #
 
 image_source: 'file'
-image_type: 'rhel8'
-image_name: 'rhel8-guest.qcow2'
+image_type: "{{ 'rhel8' if rhosp_version == 16 else 'rhel7' }}"
+image_name: "{{ image_type }}-guest.qcow2"
 image_dst_dir: '/var/lib/libvirt/images'
 temp_image: "{{ image_dst_dir }}/{{ image_name }}"
 target_image: "{{ image_dst_dir }}/baseos-{{ image_type }}.qcow2"
@@ -47,23 +49,23 @@ target_image: "{{ image_dst_dir }}/baseos-{{ image_type }}.qcow2"
 remove_temp_image: false
 
 # Key to inject in VMs
-ssh_pubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/k3AOCC9eLHg3KxhGkaUeWrF5FuY/f8jb8r+UjLCv5BBQLaELaYLQYgRxKN7u0/T7/OvMYvOKjNEAYPXYiENVFDvbMZxKftkml0bdlTfHvYRgvQXeTPHQ5qbDzhJXeabDOrljWtW3qw48w0SGiqlKMqU9ayyAfUNjxg2zCS42pVcGoVQq4uTGbrxJBmUpJZEP8sWqXrJRpx+8/7er0xDx2n8fhMym7trrniyztOZnQy0uV7UKh5qseYtam+dkMrA9drDNeL5YO+e3bAppIRVdBRnp0QkdIVI+dzb0HpTPNJ9f5cwfUPAopqD2XawayfKSmOrFhEALXMjT70dhKqq2sVUP6ZazZWnYNgbJdcBOp+s0Am5YNLU/Ae1Qbk+ZMFm6cg237GjwljX9g/3FKVbekNMZFuAVA6a3jAcMjBtnTqbzp2HHfVeWLJWWJSShtpv4cPQVfKoRgS7RauBHmWB0z6t3Wx/+P+3YyFQ7bs38K4x74j7QoRleQXxKlKGtcnWnn682XM9x1ovFfQytEVK0KIi0L+NX1hU41z3juNtk974xVtFnIlPKAIYP9CGXXCDz3VB2dCkLxSE63vkUg8ZaxGcGAq44eOCsHHMQhCd02krxvivBGXLiy4s2p6nuZEDtmp4tsoL2f352M4dmHSqNL5EqKQ4ljKH1xOtMosHVMw=='
+ssh_pubkey: {{ sshpubkey }}
 
 # Overcloud VMs to create
 overcloud: [
-{ name: 'ice-ctl-01' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-ctl-02' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-ctl-03' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-01' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-02' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-03' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-04' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-05' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-com-06' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-net-01' , vcpus: 2, ram: 6144, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-net-02' , vcpus: 2, ram: 6144, ceph: false, externalnet: false, empty_root: true },
-{ name: 'ice-ceph-01' , vcpus: 4, ram: 4096, ceph: true, externalnet: false, empty_root: true },
-{ name: 'ice-ceph-02' , vcpus: 4, ram: 4096, ceph: true, externalnet: false, empty_root: true },
-{ name: 'ice-ceph-03' , vcpus: 4, ram: 4096, ceph: true, externalnet: false, empty_root: true }
+{ name: 'ice-ctl-01' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, vbmc_port: 6501, empty_root: true, mac: "52:54:00:09:e6:c7" },
+{ name: 'ice-ctl-02' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, vbmc_port: 6502, empty_root: true, mac: "52:54:00:88:bc:c5" },
+{ name: 'ice-ctl-03' , vcpus: 2, ram: 16384, ceph: false, externalnet: false, vbmc_port: 6503, empty_root: true, mac: "52:54:00:1a:e5:63" },
+{ name: 'ice-com-01' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, vbmc_port: 6511, empty_root: true, mac: "52:54:00:8f:48:6d" },
+{ name: 'ice-com-02' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, vbmc_port: 6512, empty_root: true, mac: "52:54:00:09:b1:a9" },
+{ name: 'ice-com-03' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, vbmc_port: 6513, empty_root: true, mac: "52:54:00:f1:0c:79" },
+#{ name: 'ice-com-04' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, vbmc_port: 6514, empty_root: true, mac: "" },
+#{ name: 'ice-com-05' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, vbmc_port: 6515, empty_root: true, mac: "" },
+#{ name: 'ice-com-06' , vcpus: 4, ram: 32768, ceph: false, externalnet: false, vbmc_port: 6516, empty_root: true, mac: "" },
+#{ name: 'ice-net-01' , vcpus: 2, ram: 6144, ceph: false, externalnet: false, vbmc_port: 6521, empty_root: true, mac: "" },
+#{ name: 'ice-net-02' , vcpus: 2, ram: 6144, ceph: false, externalnet: false, vbmc_port: 6522, empty_root: true, mac: "" },
+{ name: 'ice-ceph-01' , vcpus: 4, ram: 4096, ceph: true, externalnet: false, vbmc_port: 6531, empty_root: true, mac: "52:54:00:0c:37:71" },
+{ name: 'ice-ceph-02' , vcpus: 4, ram: 4096, ceph: true, externalnet: false, vbmc_port: 6532, empty_root: true, mac: "52:54:00:09:c6:ba" },
+{ name: 'ice-ceph-03' , vcpus: 4, ram: 4096, ceph: true, externalnet: false, vbmc_port: 6533, empty_root: true, mac: "52:54:00:77:99:9e" }
 ]
 

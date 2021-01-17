@@ -1,0 +1,36 @@
+- block:
+  - name: Enable undercloud repos for OSP13
+    rhsm_repository:
+      name:
+        - rhel-7-server-rpms
+        - rhel-7-server-extras-rpms
+        - rhel-7-server-rh-common-rpms
+        - rhel-ha-for-rhel-7-server-rpms
+        - rhel-7-server-openstack-13-rpms
+        - rhel-7-server-rhceph-3-tools-rpms
+        #- rhel-7-server-satellite-tools-6.7-rpms
+      state: enabled
+
+  - name: "Install required packages for OSP13"
+    yum:
+      pkg: "{{ item }}"
+      state: present
+    loop:
+      - python-tripleoclient
+      - rhosp-director-images
+      - ceph-ansible
+      - tmux
+      - vim-enhanced
+      - ctags
+      - facter
+      - crudini
+      - libvirt
+      - libguestfs-tools
+      - git
+      #- htop
+      - tcpdump
+      - wireshark
+      - ipmitool
+      - OpenIPMI
+      - strace
+

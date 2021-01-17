@@ -20,7 +20,7 @@
     uid: 9999
     update_password: on_create
     state: present
-    password: "supersecret"
+    password: "$6$A6Fr7CCy5sJg508S$jr93cfx5vAhkjSWcWckwvoD5IdNIEx0Ja1ab5kCaSl/4SmADRWHKa/XQJ2Ku0HbsyhXSiQM0.8PgbKKnCbIj9/"
   tags:
     - users
 

@@ -1,0 +1,195 @@
+---
+# Setup undercloud VM
+- name: "Setup undercloud VM"
+  tags:
+    - undercloud-setup
+  block:
+  - name: Ensure undercloud vm is on
+    virt:
+      name: "{{ undercloud_name }}"
+      state: running
+    delegate_to: localhost
+
+  - name: "Wait for {{ undercloud_name }} to become available"
+    wait_for:
+      host: 192.168.122.253
+      port: 22
+      search_regex: OpenSSH
+      timeout: 120
+    register: wf_ucready
+    delegate_to: localhost
+
+  - name: "Create group for user {{ username }}"
+    group:
+      name: "{{ username }}"
+      gid: 9999
+      state: present
+
+  - name: "Create user {{ username }}"
+    user:
+      name: "{{ username }}"
+      comment: "RHOSP deployment user"
+      createhome: yes
+      group: "{{ username }}"
+      groups: wheel
+      append: yes
+      shell: /bin/bash
+      uid: 9999
+      update_password: on_create
+      state: present
+      password: "$6$A6Fr7CCy5sJg508S$jr93cfx5vAhkjSWcWckwvoD5IdNIEx0Ja1ab5kCaSl/4SmADRWHKa/XQJ2Ku0HbsyhXSiQM0.8PgbKKnCbIj9/"
+
+  - name: "Create sudo entry for {{ username }}"
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '{{ username }} ALL='
+      line: '{{ username }} ALL=(ALL) NOPASSWD: ALL'
+      validate: /usr/sbin/visudo -cf %s
+
+#  - name: Register undercloud server to CDN
+#    redhat_subscription:
+#      username: "{{ cdnuser }}"
+#      password: "{{ cdnpass }}"
+#      pool_ids: "{{ poolid }}"
+#      state: present
+#    when:
+#      - not satellite|bool
+
+#  - name: Disable all default repos
+#    rhsm_repository:
+#      name: '*'
+#      state: disabled
+
+#  - name: "RHOSP {{ rhosp_version }} version specific tasks"
+#    include_tasks: "osp{{ rhosp_version }}.yml"
+
+#  - name: Update OS
+#    yum:
+#      name: '*'
+#      state: latest
+
+  - name: "Create undercloud.conf in {{ username }} home"
+    template:
+      src: "undercloud-{{ rhosp_version }}.conf.j2"
+      dest: "/home/{{ username }}/undercloud.conf"
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      setype: user_home_t
+      mode: u=rw,g=r,o=r
+
+  - name: "Create nodes.json in {{ username }} home"
+    copy:
+      src: nodes.json
+      dest: "/home/{{ username }}/nodes.json"
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      setype: user_home_t
+      mode: u=rw,g=r,o=r
+
+  - name: "Create nodes.json in {{ username }} home"
+    copy:
+      src: container-image-prepare.sh
+      dest: "/home/{{ username }}/container-image-prepare.sh"
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      setype: user_home_t
+      mode: u=rw,g=r,o=r
+
+#  - name: "Run undercloud installer"
+#    become: yes
+#    become_user: "{{ username }}"
+#    shell: |
+#      /usr/bin/openstack undercloud install
+#    args:
+#      chdir: "/home/{{ username }}"
+#      creates: "/home/{{ username }}/.instack/install-undercloud.log"
+
+#  - name: "create conatiner-image-prepare.yaml"
+#    become_user: "{{ username }}"
+#    command: |
+#      /usr/bin/openstack tripleo container image prepare default  --local-push-destination  --output-env-file containers-prepare-parameter.yaml
+#
+#  - name: "Add credentials to container-image-prepare.yaml"
+#    become_user: "{{ username }}"
+#    lineinfile:
+#      path: /home/{{ username }}/containers-prepare-parameter.yaml
+#      state: present
+#      regexp: 'bottom'
+#      line: '  ContainerImageRegistryLogin: true'
+#      line: '  ContainerImageRegistryCredentials:'
+#      line: '    my-user: my-token'
+#
+  - name: "Clone templates github repo"
+    become: yes
+    become_user: "{{ username }}"
+    git:
+      repo: "https://github.com/mauroseb/tht-rhosp{{ rhosp_version }}"
+      dest: /home/{{ username }}/templates
+      depth: 1
+
+  - name: "Copy deployment script to home"
+    become: yes
+    become_user: "{{ username }}"
+    copy:
+      src: "/home/{{ username }}/templates/deploy.sh"
+      dest: "/home/{{ username }}/"
+      mode: 0755
+      remote_src: yes
+
+  - name: "Create images directory"
+    become: yes
+    become_user: "{{ username }}"
+    file:
+      path: "/home/{{ username }}/images"
+      state: directory
+      mode: '0755'
+      owner: '{{ username }}'
+      group: '{{ username }}'
+
+  - name: "Extract overcloud images"
+    become: yes
+    become_user: "{{ username }}"
+    unarchive:
+      src: "{{ item }}"
+      dest: "/home/{{ username }}/images"
+      remote_src: yes
+    with_items:
+      - /usr/share/rhosp-director-images/overcloud-full-latest.tar
+      - /usr/share/rhosp-director-images/ironic-python-agent-latest.tar
+
+  - name: "Upload overcloud images to glance"
+    become: yes
+    become_user: "{{ username }}"
+    shell: |
+      source /home/{{ username }}/stackrc && /usr/bin/openstack overcloud image upload --image-path /home/{{ username }}/images/ && touch /home/{{ username }}/images/uploaded
+    args:
+      chdir: "/home/{{ username }}"
+      creates: "home//{{ username }}/images/uploaded"
+
+  - name: "Setting nameserver for control plane network"
+    become: yes
+    become_user: "{{ username }}"
+    shell: |
+      source /home/{{ username }}/stackrc && /usr/bin/openstack subnet set --dns-nameserver {{ dns1 }} --dns-nameserver {{ dns2 }} ctlplane-subnet
+    args:
+      chdir: "/home/{{ username }}"
+
+#  - name: "create conatiner-image-prepare.yaml"
+#  - name: "create conatiner-image-prepare.yaml"
+#  - name: "Create VM snapshot pre undercloud install"
+#    command: |
+#      /usr/bin/virsh snapshot-create-as  {{ undercloud_name }} {{ undercloud_name }}-pre-install
+#    delegate_to: localhost
+#
+#  - name: "Import nodes"
+#    become_user: "{{ username }}"
+#    command: |
+#      /usr/bin/openstack overcloud node import /home/{{ username }}/nodes.json
+#
+#  - name: "Instrospect all manageable nodes"
+#    become_user: "{{ username }}"
+#    command: |
+#      /usr/bin/openstack overcloud node introspect --all-manageable --provide
+#
+...

@@ -1,0 +1,7 @@
+---
+undercloud_ip: 192.168.122.253
+undercloud_prefix: 24
+undercloud_gw: 192.168.122.1
+dns1: 192.168.122.1
+dns2: 192.168.3.80
+os_variant: "{{ 'rhel8.1' if rhosp_version == 16 else 'rhel7' }}"

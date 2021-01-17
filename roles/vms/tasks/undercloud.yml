@@ -22,10 +22,10 @@
 
   - name: Setup undercloud eth1
     command: >
-      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --run-command 'echo -e "DEVICE=eth1\nBOOTPROTO=static\nONBOOT=yes\nIPADDR=192.168.122.253\nPREFIX=24\nGATEWAY=192.168.122.1\nDNS1=192.168.122.1\nDNS2=192.168.3.254\n" > /etc/sysconfig/network-scripts/ifcfg-eth1'
+      /usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --run-command 'echo -e "DEVICE=eth1\nBOOTPROTO=static\nONBOOT=yes\nIPADDR={{ undercloud_ip }}\nPREFIX={{ undercloud_prefix }}\nGATEWAY={{ undercloud_gw }}\nDNS1={{ dns1 }}\nDNS2={{ dns2 }}\n" > /etc/sysconfig/network-scripts/ifcfg-eth1'
 
   - name: Setup undercloud /etc/hosts
-    command: "/usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --append-line '/etc/hosts:192.168.122.253 {{ undercloud_name }}.{{ domain_name }} {{ undercloud_name }}'"
+    command: "/usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --append-line '/etc/hosts:{{ undercloud_ip }} {{ undercloud_name }}.{{ domain_name }} {{ undercloud_name }}'"
 
   - name: Setup undercloud hostname
     command: "/usr/bin/virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --hostname '{{ undercloud_name }}.lab.local'"
@@ -35,10 +35,10 @@
       path: /etc/hosts
       state: present
       regexp: '.*{{ undercloud_name }}\.{{ domain_name }}.*'
-      line: "192.168.122.253 {{ undercloud_name }}.{{ domain_name }} {{ undercloud_name }}"
+      line: "{{ undercloud_ip }} {{ undercloud_name }}.{{ domain_name }} {{ undercloud_name }}"
 
-  - name: SELinux relabel
-    command: "virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --selinux-relabel"
+#  - name: SELinux relabel
+#    command: "virt-customize -a {{ image_dst_dir }}/{{ undercloud_name }}.qcow2 --selinux-relabel"
 
   - name: Ensure undercloud vm is on
     virt:

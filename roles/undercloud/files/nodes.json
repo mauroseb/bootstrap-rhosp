@@ -1,0 +1,124 @@
+{
+    "nodes": [
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-ctl-01",
+            "capabilities": "node:ice-ctl-00,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-ctl-02",
+            "capabilities": "node:ice-ctl-02,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-ctl-03",
+            "capabilities": "node:ice-ctl-02,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-com-01",
+            "capabilities": "node:ice-com-00,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-com-02",
+            "capabilities": "node:ice-com-01,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-com-03",
+            "capabilities": "node:ice-com-02,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-com-04",
+            "capabilities": "node:ice-com-03,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-com-05",
+            "capabilities": "node:ice-com-04,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-com-06",
+            "capabilities": "node:ice-com-05,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-ceph-01",
+            "capabilities": "node:ice-ceph-00,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-ceph-02",
+            "capabilities": "node:ice-ceph-01,boot_option:local,profile:baremetal"
+        },
+        {
+            "mac": "52:54:00:16:e0:9d",
+            "pm_type": "ipmi",
+            "pm_user": "admin",
+            "pm_password": "redhat",
+            "pm_addr": "192.168.122.1",
+            "pm_port": 6500,
+            "name": "ice-ceph-03",
+            "capabilities": "node:ice-ceph-02,boot_option:local,profile:baremetal"
+        }
+    ]
+}
