@@ -14,6 +14,11 @@
    - Create and tune undercloud vm
    - Create overcloud vms
    - Setup vBMC for the VMs
+   - Prepare undercloud based on RHOSP version (13 or 16)
+   - Create undercloud configuration
+   - Install TripleO in the undercloud
+   - Create minimal overcloud configuration
+   - Set everything ready to deploy overcloud
 
 
 **NOTE:** There are nowadays more mature and also complex ways to achieve similar results like Infrared project or TripleO quickstart. However this code tries to keep the steps as simple as possible and should be easy to troubleshoot.
