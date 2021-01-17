@@ -33,4 +33,7 @@
       - ipmitool
       - OpenIPMI
       - strace
+      - wget
+      - libguestfs-tools
+      - virt-customize
 
