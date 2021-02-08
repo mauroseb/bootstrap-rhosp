@@ -24,8 +24,3 @@ default_bridge`: virbr0
 #external_net_netmask: 255.255.255.0
 #external_net_dev: enp2s0
 external_bridge: br0
-
-# Url for libvirt RHEL7 image
-# curl -o /var/lib/libvirt/images/rhel7-guest-official.qcow2 http://10.12.50.1/pub/rhel-guest-image-7.3-35.x86_64.qcow2
-rhel7_image_url: http://10.12.50.1/pub/rhel-guest-image-7.3-35.x86_64.qcow2
-rhel7_image_dst: /var/lib/libvirt/images/rhel7-guest-official.qcow2
