@@ -1,6 +1,8 @@
 <network>
   <name>default</name>
-  <forward dev="{{ external_bridge }}" mode='route' />
+  <forward dev='{{ external_bridge }}' mode='route'>
+     <interface dev='{{ external_bridge }}' />
+  </forward>
   <bridge name="{{ default_bridge }}" stp='off' delay='0' />
   <ip address='{{ default_net_ip }}' netmask='{{ default_net_netmask }}'/>
 </network>
