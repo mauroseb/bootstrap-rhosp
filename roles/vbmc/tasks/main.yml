@@ -15,25 +15,9 @@
 
     - name: Enable and start service vbmcd
       service:
-        name: libvirtd.service
+        name: vbmcd.service
         enabled: yes
         state: started
-
-#    - name: Set fact for vBMC port
-#      set_fact:
-#        vbmc_port: "{{ vbmc_port|default({}) | combine( { item.name: {{ 6500 + idx }} } )"
-#      loop: "{{ overcloud|list }}"
-#      loop_control:
-#        index_var: idx
-#        label: "{{ item.name }}"
-
-#    - name: Create vBMC configuration for every VM
-#      command: |
-#        /usr/bin/vbmc add {{ item.name }} --port {{ 6500 + idx }} --username {{ vbmcuser }} --password {{ vbmcpass }}
-#      loop: "{{ overcloud|list }}"
-#      loop_control:
-#        index_var: idx
-#        label: "{{ item.name }}"
 
     - name: Create vBMC configuration for every VM
       command: |
