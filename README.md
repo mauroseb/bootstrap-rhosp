@@ -3,7 +3,7 @@
 
 ## Description
 
- - The set of roles will prepare the environment to deploy Red Hat Openstack Platform
+ - The set of Ansible roles will prepare the environment to deploy Red Hat Openstack Platform
  - The roles cover the following tasks:
  
    - Install required software
